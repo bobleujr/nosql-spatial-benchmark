@@ -1,40 +1,16 @@
 import time
 import os
+import requests
 from couchbase.n1ql import N1QLQuery
-
-
 from couchbase.bucket import Bucket
 from couchbase.exceptions import CouchbaseError
-
-# c = Bucket('couchbase://localhost/gmt7004')
-
-# try:
-#     beer = c.get("aass_brewery-juleol")
-
-# except CouchbaseError as e:
-#     print "Couldn't retrieve value for key", e
-#     # Rethrow the exception, making the application exit
-#     raise
-
-# doc = beer.value
-
-# # Because Python 2.x will complain if an ASCII format string is used
-# # with Unicode format values, we make the format string unicode as well.
+from couchbase.views.params import Query
+from couchbase.views.iterator import View
 
 
-# print unicode("{name}, ABV: {abv}").format(name=doc['name'], abv=doc['abv'])
 
-# doc['comment'] = "Random beer from Norway"
-
-# try:
-#     result = c.replace("aass_brewery-juleol", doc)
-#     print result
-
-# except CouchbaseError as e:
-#     print "Couldn't replace key"
-#     raise
-
-
+""" 
+TEST 1
 
 command = "'/Applications/Couchbase Server.app/Contents/Resources/couchbase-core/bin/cbdocloader' -u admin -p 011092 -n 127.0.0.1 -b building-footprint output.zip"
 
@@ -47,24 +23,94 @@ end = time.time()
 
 print 'Time to upload = '+str(end - start)+' seconds'
 
-
-# #1
-# start = time.time()
-
-# db.count()
-
-# end = time.time()
+"""
 
 
-# print 'Time to count = '+str(end - start)+' seconds'
+""" 
+	Test 2
+	Query every facility with capacity > 10000
+"""
+"""
+url_base = "http://127.0.0.1:8092/selected-facilities"
+design = "/_design/dev_by_capacity"
+view = "/_view/by_capacity"
+params = "?startkey=10000"
+final_params = "&full_set=true"
 
-# #2
-# start = time.time()
 
-# db.find({"borough":"Brooklyn"})
+start = time.time()
 
-# end = time.time()
+response = requests.get(url_base+design+view+params+final_params)
+
+end = time.time()
+
+print len(response.json()['rows'])
+print response.json()
+print 'Time to query = '+str(end - start)+' seconds'
+"""
 
 
-# print 'Time to find Brooklyn = '+str(end - start)+' seconds'
+
+
+""" 
+	Test 3
+	Query all geometries within TopLeft=[-73.995762,40.764826] BottomRight=[-73.934034,40.802038]
+"""
+"""
+url_base = "http://127.0.0.1:8092/selected-facilities"
+design = "/_design/dev_facilities"
+view = "/_spatial/facilities"
+params = "?start_range=[-73.995762,40.764826]&end_range=[-73.934034,40.802038]"
+final_params = "&full_set=true"
+
+start = time.time()
+
+response = requests.get(url_base+design+view+params+final_params)
+
+end = time.time()
+
+print response.json()
+# print len(response.json()['rows'])
+print 'Time to query = '+str(end - start)+' seconds'
+
+"""
+
+
+
+""" 
+	Test 2
+	Query all facilities by normal vs spatial view
+"""
+
+url_base = "http://127.0.0.1:8092/selected-facilities"
+design = "/_design/dev_by_capacity"
+view = "/_view/by_capacity"
+params = "?"
+final_params = "&full_set=true"
+
+
+start = time.time()
+
+response = requests.get(url_base+design+view+params+final_params)
+
+end = time.time()
+
+print len(response.json()['rows'])
+print 'Time to query = '+str(end - start)+' seconds'
+
+design = "/_design/dev_facilities"
+view = "/_spatial/facilities"
+params = "?start_range=[-90,-90]&end_range=[90,90]"
+final_params = "&full_set=true"
+
+start = time.time()
+
+response = requests.get(url_base+design+view+params+final_params)
+
+end = time.time()
+
+# print response.json()
+print len(response.json()['rows'])
+print 'Time to query = '+str(end - start)+' seconds'
+
 

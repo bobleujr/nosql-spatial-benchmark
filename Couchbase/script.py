@@ -56,7 +56,6 @@ print 'Time to query = '+str(end - start)+' seconds'
 	Test 3
 	Query all geometries within TopLeft=[-73.995762,40.764826] BottomRight=[-73.934034,40.802038]
 """
-"""
 url_base = "http://127.0.0.1:8092/selected-facilities"
 design = "/_design/dev_facilities"
 view = "/_spatial/facilities"
@@ -69,19 +68,18 @@ response = requests.get(url_base+design+view+params+final_params)
 
 end = time.time()
 
-print response.json()
-# print len(response.json()['rows'])
+# print response.json()
+print len(response.json()['rows'])
 print 'Time to query = '+str(end - start)+' seconds'
 
-"""
 
 
 
 """ 
-	Test 2
+	Test 4
 	Query all facilities by normal vs spatial view
 """
-
+"""
 url_base = "http://127.0.0.1:8092/selected-facilities"
 design = "/_design/dev_by_capacity"
 view = "/_view/by_capacity"
@@ -112,5 +110,6 @@ end = time.time()
 # print response.json()
 print len(response.json()['rows'])
 print 'Time to query = '+str(end - start)+' seconds'
+"""
 
 

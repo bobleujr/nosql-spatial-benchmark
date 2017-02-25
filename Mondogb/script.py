@@ -36,7 +36,7 @@ print 'Time to upload = '+str(end - start)+' seconds'
 """ 
 	Test 2
 	Query every facility with capacity > 10000
-
+"""
 
 db = client.test.selectedfacilities
 
@@ -46,14 +46,16 @@ response = list(db.find({"properties.capacity":{ '$gt': 10000 }}))
 
 end = time.time()
 
+print len(response)
+
 print 'Time to select > 10,000 = '+str(end - start)+' seconds'
-"""
+
 
 
 """ 
 	Test 3
 	Query all geometries within TopLeft=[-73.995762,40.764826] BottomRight=[-73.934034,40.802038]
-
+"""
 
 
 db = client.test.selectedfacilities
@@ -65,8 +67,10 @@ response = list(db.find( {
 						} ))
 end = time.time()
 
+print len(response)
+
 print 'Time to select bbox = '+str(end - start)+' seconds'
-"""
+
 
 
 """ 
@@ -75,9 +79,10 @@ print 'Time to select bbox = '+str(end - start)+' seconds'
 """
 
 """ 
-	By normal way
 
+	By normal way
 """
+
 db = client.test.selectedfacilities
 
 start = time.time()
@@ -90,21 +95,25 @@ print len(response)
 print 'Time to get all selected facilities (normal) = '+str(end - start)+' seconds'
 
 """ 
-	By spatial way
 
+	By spatial way
 """
+
 db = client.test.selectedfacilities
 
 start = time.time()
 
 response = list(db.find( {
-						   'geometry': { '$geoWithin': { '$box':  [ [-180,-180], [180,180] ] } }
+						    'geometry': { '$geoWithin': { '$box':  [ [-180,-180], [180,180] ] } }
+						   #'geometry': { '$geoWithin': { '$box':  [ [-73.934034,40.764826], [-73.995762,40.802038] ] } }
+						   
 						} ))
 
 end = time.time()
 
 print len(response)
 print 'Time to get all selected facilities (spatial) = '+str(end - start)+' seconds'
+
 
 
 """ 
@@ -135,11 +144,9 @@ db = client.test.buildingfootprints
 
 start = time.time()
 
-response = list(db.find( {
-						   'geometry': { '$geoWithin': { '$box':  [ [-180,-180], [180,180] ] } }
-						} ))
+response = list(db.find({'geometry': {'$geoWithin': {'$geometry':  { 'type' : 'Polygon' , 'coordinates': [ [[-71.934034, 38.764826],[-71.934034,43.802038],[-75.995762, 43.802038],[-75.995762,38.764826],[-71.934034, 38.764826]]]}}}}))
 
 end = time.time()
 
 print len(response)
-print 'Time to get all selected facilities (spatial) = '+str(end - start)+' seconds'
+print 'Time to get all building footprints (spatial) = '+str(end - start)+' seconds'
